@@ -7,19 +7,21 @@
   "license": "MIT",
   "repository": "https://github.com/antfu/type-challenges.git",
   "scripts": {
-    "readme": "esno ./scripts/readme.ts",
-    "build": "esno ./scripts/build.ts",
-    "generate": "esno ./scripts/generate-play.ts",
+    "readme": "tsx ./scripts/readme.ts",
+    "build": "tsx ./scripts/build.ts",
+    "generate": "tsx ./scripts/generate-play.ts",
     "lint": "eslint .",
-    "translate": "esno ./scripts/translate-cli.ts",
-    "utils:release": "pnpm -C utils release"
+    "translate": "tsx ./scripts/translate-cli.ts",
+    "utils:release": "pnpm -C utils release",
+    "stats": "tsx ./stats"
   },
   "dependencies": {
-    "esno": "^0.16.3",
     "fast-glob": "^3.2.11",
     "fs-extra": "^10.1.0",
+    "glob": "^10.2.7",
     "js-yaml": "^4.1.0",
-    "lz-string": "^1.4.4"
+    "lz-string": "^1.4.4",
+    "tsx": "^3.12.7"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.25.1",
@@ -46,7 +48,13 @@
       "no-unused-expressions": "off",
       "prefer-const": "off",
       "no-alert": "off",
-      "@typescript-eslint/consistent-type-definitions": "off"
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/quotes": "off",
+      "@typescript-eslint/comma-dangle": "off",
+      "arrow-parens": "off",
+      "no-console": "off",
+      "antfu/if-newline": "off",
+      "no-new": "off"
     }
   }
 }
