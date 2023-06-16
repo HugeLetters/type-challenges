@@ -54,7 +54,8 @@
       "arrow-parens": "off",
       "no-console": "off",
       "antfu/if-newline": "off",
-      "no-new": "off"
+      "no-new": "off",
+      "no-trailing-spaces": "off"
     }
   }
 }

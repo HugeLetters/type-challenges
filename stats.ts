@@ -26,7 +26,7 @@ glob(`./playground/${selectedDifficulty ?? "**"}/*.ts`).then(async files => {
               resolve(undefined)
             }
           )
-        })
+        })  
       })
   )
   console.log(selectedDifficulty ? results[selectedDifficulty] : results)
