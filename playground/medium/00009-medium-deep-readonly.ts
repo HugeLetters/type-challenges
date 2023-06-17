@@ -36,14 +36,18 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DeepReadonly<T> = any
+type DeepReadonly<T> = T extends {}
+  ? T extends Function
+    ? T
+    : { readonly [K in keyof T]: DeepReadonly<T[K]> }
+  : T
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<DeepReadonly<X1>, Expected1>>,
-  Expect<Equal<DeepReadonly<X2>, Expected2>>,
+  Expect<Equal<DeepReadonly<X2>, Expected2>>
 ]
 
 type X1 = {
@@ -55,15 +59,15 @@ type X1 = {
       g: {
         h: {
           i: true
-          j: 'string'
+          j: "string"
         }
-        k: 'hello'
+        k: "hello"
       }
       l: [
-        'hi',
+        "hi",
         {
-          m: ['hey']
-        },
+          m: ["hey"]
+        }
       ]
     }
   }
@@ -80,15 +84,15 @@ type Expected1 = {
       readonly g: {
         readonly h: {
           readonly i: true
-          readonly j: 'string'
+          readonly j: "string"
         }
-        readonly k: 'hello'
+        readonly k: "hello"
       }
       readonly l: readonly [
-        'hi',
+        "hi",
         {
-          readonly m: readonly ['hey']
-        },
+          readonly m: readonly ["hey"]
+        }
       ]
     }
   }
