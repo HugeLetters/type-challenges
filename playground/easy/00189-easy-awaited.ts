@@ -22,10 +22,17 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyAwaited<T> = any
-
+type PromiseLike = { then: (onSuccess: (result: any) => any) => any }
+type MyAwaited<T extends PromiseLike> = T extends {
+  then: (onSuccess: (result: infer P) => any) => any
+}
+  ? P extends PromiseLike
+    ? MyAwaited<P>
+    : P
+  : never
+declare const A: Promise<string>
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type X = Promise<string>
 type Y = Promise<{ field: number }>
@@ -38,7 +45,7 @@ type cases = [
   Expect<Equal<MyAwaited<Y>, { field: number }>>,
   Expect<Equal<MyAwaited<Z>, string | number>>,
   Expect<Equal<MyAwaited<Z1>, string | boolean>>,
-  Expect<Equal<MyAwaited<T>, number>>,
+  Expect<Equal<MyAwaited<T>, number>>
 ]
 
 // @ts-expect-error

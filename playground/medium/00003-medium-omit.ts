@@ -30,18 +30,22 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyOmit<T, K> = any
+type MyOmit<T, K extends keyof T, RK extends keyof T = keyof T> = {
+  [TempK in RK extends K ? never : RK]: T[TempK]
+}
+type B = MyOmit<Todo, "description">
+//   ^?
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
-  Expect<Equal<Expected1, MyOmit<Todo, 'description'>>>,
-  Expect<Equal<Expected2, MyOmit<Todo, 'description' | 'completed'>>>,
+  Expect<Equal<Expected1, MyOmit<Todo, "description">>>,
+  Expect<Equal<Expected2, MyOmit<Todo, "description" | "completed">>>
 ]
 
 // @ts-expect-error
-type error = MyOmit<Todo, 'description' | 'invalid'>
+type error = MyOmit<Todo, "description" | "invalid">
 
 interface Todo {
   title: string
