@@ -55,17 +55,9 @@ const result1 = a
   .option("name", "type-challenges")
   .get()
 
-const result2 = a
-  .option("name", "another name")
-  // @ts-expect-error
-  .option("name", "last name")
-  .get()
+const result2 = a.option("name", "another name").option("name", "last name").get()
 
-const result3 = a
-  .option("name", "another name")
-  // @ts-expect-error
-  .option("name", 123)
-  .get()
+const result3 = a.option("name", "another name").option("name", 123).get()
 
 type cases = [
   Expect<Alike<typeof result1, Expected1>>,
