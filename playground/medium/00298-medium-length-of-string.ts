@@ -16,8 +16,6 @@ type StringToTuple<S extends string> = S extends `${infer First}${infer Rest}`
   ? [First, ...StringToTuple<Rest>]
   : []
 type LengthOfString<S extends string> = StringToTuple<S>["length"]
-type b = LengthOfString<"kumiko">
-//   ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from "@type-challenges/utils"

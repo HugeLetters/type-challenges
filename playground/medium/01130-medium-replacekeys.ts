@@ -8,7 +8,6 @@
   Implement a type ReplaceKeys, that replace keys in union types, if some type has not this key, just skip replacing,
   A type takes three arguments.
 
-
   For example:
 
   ```ts
@@ -30,7 +29,6 @@
     flag: number
   }
 
-
   type Nodes = NodeA | NodeB | NodeC
 
   type ReplacedNodes = ReplaceKeys<Nodes, 'name' | 'flag', {name: number, flag: string}> // {type: 'A', name: number, flag: string} | {type: 'B', id: number, flag: string} | {type: 'C', name: number, flag: string} // would replace name from string to number, replace flag from number to string.
@@ -43,55 +41,56 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ReplaceKeys<U, T, Y> = any
-
+type ReplaceKeys<U, T extends keyof never, Y> = {
+  [K in keyof U]: K extends T ? (K extends keyof Y ? Y[K] : never) : U[K]
+}
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type NodeA = {
-  type: 'A'
+  type: "A"
   name: string
   flag: number
 }
 
 type NodeB = {
-  type: 'B'
+  type: "B"
   id: number
   flag: number
 }
 
 type NodeC = {
-  type: 'C'
+  type: "C"
   name: string
   flag: number
 }
 
 type ReplacedNodeA = {
-  type: 'A'
+  type: "A"
   name: number
   flag: string
 }
 
 type ReplacedNodeB = {
-  type: 'B'
+  type: "B"
   id: number
   flag: string
 }
 
 type ReplacedNodeC = {
-  type: 'C'
+  type: "C"
   name: number
   flag: string
 }
 
 type NoNameNodeA = {
-  type: 'A'
+  type: "A"
   flag: number
   name: never
 }
 
 type NoNameNodeC = {
-  type: 'C'
+  type: "C"
   flag: number
   name: never
 }
@@ -101,8 +100,8 @@ type ReplacedNodes = ReplacedNodeA | ReplacedNodeB | ReplacedNodeC
 type NodesNoName = NoNameNodeA | NoNameNodeC | NodeB
 
 type cases = [
-  Expect<Equal<ReplaceKeys<Nodes, 'name' | 'flag', { name: number; flag: string }>, ReplacedNodes>>,
-  Expect<Equal<ReplaceKeys<Nodes, 'name', { aa: number }>, NodesNoName>>,
+  Expect<Equal<ReplaceKeys<Nodes, "name" | "flag", { name: number; flag: string }>, ReplacedNodes>>,
+  Expect<Equal<ReplaceKeys<Nodes, "name", { aa: number }>, NodesNoName>>
 ]
 
 /* _____________ Further Steps _____________ */

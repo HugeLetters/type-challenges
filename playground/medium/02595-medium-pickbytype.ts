@@ -23,10 +23,10 @@
 
 /* _____________ Your Code Here _____________ */
 
-type PickByType<T, U> = any
+type PickByType<T, U> = { [K in keyof T as T[K] extends U ? K : never]: T[K] }
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 interface Model {
   name: string
@@ -38,7 +38,7 @@ interface Model {
 type cases = [
   Expect<Equal<PickByType<Model, boolean>, { isReadonly: boolean; isEnable: boolean }>>,
   Expect<Equal<PickByType<Model, string>, { name: string }>>,
-  Expect<Equal<PickByType<Model, number>, { count: number }>>,
+  Expect<Equal<PickByType<Model, number>, { count: number }>>
 ]
 
 /* _____________ Further Steps _____________ */
