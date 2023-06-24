@@ -9,7 +9,7 @@
   "scripts": {
     "readme": "tsx ./scripts/readme.ts",
     "build": "tsx ./scripts/build.ts",
-    "generate": "tsx ./scripts/generate-play.ts",
+    "generate": "tsx ./scripts/generate-play.ts --keep-changes",
     "lint": "eslint .",
     "translate": "tsx ./scripts/translate-cli.ts",
     "utils:release": "pnpm -C utils release",
