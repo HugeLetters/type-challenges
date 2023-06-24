@@ -23,10 +23,12 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ObjectEntries<T> = any
+type ObjectEntries<T, R = { [K in keyof T]-?: T[K] }> = {
+  [K in keyof R]: R[K] extends never ? [K, undefined] : [K, R[K]]
+}[keyof R]
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 interface Model {
   name: string
@@ -34,14 +36,14 @@ interface Model {
   locations: string[] | null
 }
 
-type ModelEntries = ['name', string] | ['age', number] | ['locations', string[] | null]
+type ModelEntries = ["name", string] | ["age", number] | ["locations", string[] | null]
 
 type cases = [
   Expect<Equal<ObjectEntries<Model>, ModelEntries>>,
   Expect<Equal<ObjectEntries<Partial<Model>>, ModelEntries>>,
-  Expect<Equal<ObjectEntries<{ key?: undefined }>, ['key', undefined]>>,
-  Expect<Equal<ObjectEntries<{ key: undefined }>, ['key', undefined]>>,
-  Expect<Equal<ObjectEntries<{ key: string | undefined }>, ['key', string | undefined]>>,
+  Expect<Equal<ObjectEntries<{ key?: undefined }>, ["key", undefined]>>,
+  Expect<Equal<ObjectEntries<{ key: undefined }>, ["key", undefined]>>,
+  Expect<Equal<ObjectEntries<{ key: string | undefined }>, ["key", string | undefined]>>
 ]
 
 /* _____________ Further Steps _____________ */
