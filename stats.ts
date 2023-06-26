@@ -36,7 +36,7 @@ async function main() {
   await task("Checking challenges", async ({ setStatus }) => {
     let progress = -1
     function incProgress() {
-      setStatus(`${100 * (++progress / filesCount)}%`)
+      setStatus(`${((100 * ++progress) / filesCount).toFixed(2)}%`)
     }
     incProgress()
 
@@ -107,10 +107,8 @@ async function checkChallenge(file: string) {
 
 function chunk<T>(array: T[], size: number) {
   const chunks: T[][] = []
-  for (let i = 0; i < array.length; i++) {
-    if (!(i % size)) chunks.push([array[i]])
-    else chunks.at(-1)?.push(array[i])
-  }
+  for (let i = 0; i < array.length; i += size) chunks.push(array.slice(i, i + size))
   return chunks
 }
+
 main()

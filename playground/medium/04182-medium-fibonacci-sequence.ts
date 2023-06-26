@@ -20,17 +20,28 @@
 */
 
 /* _____________ Your Code Here _____________ */
+type NumberToTuple<T extends number, A extends readonly 1[] = []> = A["length"] extends T
+  ? A
+  : NumberToTuple<T, [1, ...A]>
+type Add<A extends number, B extends number> = [
+  ...NumberToTuple<A>,
+  ...NumberToTuple<B>
+]["length"] extends infer A extends number
+  ? A
+  : never
 
-type Fibonacci<T extends number> = any
+type Fibonacci<T extends number, N extends number = 1> = T extends N | Add<N, 1>
+  ? 1
+  : Add<Fibonacci<T, Add<N, 1>>, Fibonacci<T, Add<N, 2>>>
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<Fibonacci<1>, 1>>,
   Expect<Equal<Fibonacci<2>, 1>>,
   Expect<Equal<Fibonacci<3>, 2>>,
-  Expect<Equal<Fibonacci<8>, 21>>,
+  Expect<Equal<Fibonacci<8>, 21>>
 ]
 
 /* _____________ Further Steps _____________ */
