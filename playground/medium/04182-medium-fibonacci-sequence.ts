@@ -20,19 +20,21 @@
 */
 
 /* _____________ Your Code Here _____________ */
-type NumberToTuple<T extends number, A extends readonly 1[] = []> = A["length"] extends T
-  ? A
-  : NumberToTuple<T, [1, ...A]>
-type Add<A extends number, B extends number> = [
-  ...NumberToTuple<A>,
-  ...NumberToTuple<B>
-]["length"] extends infer A extends number
-  ? A
-  : never
+type _Fibonacci<T extends number, N extends readonly 1[] = [1]> = T extends (
+  | N
+  | [...N, 1]
+)["length"]
+  ? [1]
+  : [..._Fibonacci<T, [...N, 1]>, ..._Fibonacci<T, [...N, 1, 1]>]
 
-type Fibonacci<T extends number, N extends number = 1> = T extends N | Add<N, 1>
-  ? 1
-  : Add<Fibonacci<T, Add<N, 1>>, Fibonacci<T, Add<N, 2>>>
+type Fibonacci<T extends number> = _Fibonacci<T>["length"]
+
+type b = Fibonacci<21>
+//   ^?
+type b2 = Fibonacci<20>
+//   ^?
+type b3 = Fibonacci<3>
+//   ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from "@type-challenges/utils"
