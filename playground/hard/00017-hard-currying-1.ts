@@ -28,23 +28,33 @@
 
 /* _____________ Your Code Here _____________ */
 
-declare function Currying(fn: any): any
+type Curry<A extends any[], R> = A extends [infer F, ...infer Rest] ? (arg: F) => Curry<Rest, R> : R
+declare function Currying<FN>(
+  fn: FN
+): FN extends (...args: infer A) => infer R ? (A extends [] ? FN : Curry<A, R>) : never
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 const curried1 = Currying((a: string, b: number, c: boolean) => true)
-const curried2 = Currying((a: string, b: number, c: boolean, d: boolean, e: boolean, f: string, g: boolean) => true)
+const curried2 = Currying(
+  (a: string, b: number, c: boolean, d: boolean, e: boolean, f: string, g: boolean) => true
+)
 const curried3 = Currying(() => true)
 
 type cases = [
-  Expect<Equal<
-    typeof curried1, (a: string) => (b: number) => (c: boolean) => true
-  >>,
-  Expect<Equal<
-    typeof curried2, (a: string) => (b: number) => (c: boolean) => (d: boolean) => (e: boolean) => (f: string) => (g: boolean) => true
-  >>,
-  Expect<Equal<typeof curried3, () => true>>,
+  Expect<Equal<typeof curried1, (a: string) => (b: number) => (c: boolean) => true>>,
+  Expect<
+    Equal<
+      typeof curried2,
+      (
+        a: string
+      ) => (
+        b: number
+      ) => (c: boolean) => (d: boolean) => (e: boolean) => (f: string) => (g: boolean) => true
+    >
+  >,
+  Expect<Equal<typeof curried3, () => true>>
 ]
 
 /* _____________ Further Steps _____________ */
