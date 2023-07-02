@@ -27,14 +27,9 @@ type _Fibonacci<T extends number, N extends readonly 1[] = [1]> = T extends (
   ? [1]
   : [..._Fibonacci<T, [...N, 1]>, ..._Fibonacci<T, [...N, 1, 1]>]
 
-type Fibonacci<T extends number> = _Fibonacci<T>["length"]
-
-type b = Fibonacci<21>
-//   ^?
-type b2 = Fibonacci<20>
-//   ^?
-type b3 = Fibonacci<3>
-//   ^?
+type Fibonacci<T extends number> = _Fibonacci<T> extends infer R extends any[]
+  ? R["length"]
+  : "Something went wrong"
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from "@type-challenges/utils"

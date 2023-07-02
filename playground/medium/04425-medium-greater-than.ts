@@ -25,10 +25,42 @@
 
 /* _____________ Your Code Here _____________ */
 
-type GreaterThan<T extends number, U extends number> = any
+type NumberToTuple<N extends number, T extends readonly 1[] = []> = T["length"] extends N
+  ? T
+  : NumberToTuple<N, [...T, 1]>
+type GreaterThan_Tuple<T extends number, U extends number> = NumberToTuple<T> extends [
+  1,
+  ...any[],
+  ...NumberToTuple<U>
+]
+  ? true
+  : false
+
+type _SplitNumber<S extends string> = `${S}` extends `${infer F extends number}${infer R}`
+  ? [F, ..._SplitNumber<R>]
+  : []
+type SplitNumber<T extends number> = _SplitNumber<`${T}`>
+
+type GreaterThan_Digits<T extends number[], U extends number[]> = [T, U] extends [
+  [infer FT extends number, ...infer RT extends number[]],
+  [infer FU extends number, ...infer RU extends number[]]
+]
+  ? GreaterThan_Tuple<FT, FU> extends true
+    ? true
+    : GreaterThan_Digits<RT, RU>
+  : false
+
+type GreaterThan<
+  T extends number,
+  U extends number,
+  ST extends SplitNumber<T> = SplitNumber<T>,
+  SU extends SplitNumber<U> = SplitNumber<U>
+> = ST["length"] extends SU["length"]
+  ? GreaterThan_Digits<ST, SU>
+  : GreaterThan_Tuple<ST["length"], SU["length"]>
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<GreaterThan<1, 0>, true>>,
@@ -39,7 +71,7 @@ type cases = [
   Expect<Equal<GreaterThan<20, 20>, false>>,
   Expect<Equal<GreaterThan<10, 100>, false>>,
   Expect<Equal<GreaterThan<111, 11>, true>>,
-  Expect<Equal<GreaterThan<1234567891011, 1234567891010>, true>>,
+  Expect<Equal<GreaterThan<1234567891011, 1234567891010>, true>>
 ]
 
 /* _____________ Further Steps _____________ */

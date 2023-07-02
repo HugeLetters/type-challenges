@@ -20,10 +20,16 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsTuple<T> = any
+type IsTuple<T> = [T] extends [never]
+  ? false
+  : T extends readonly any[]
+  ? number extends T["length"]
+    ? false
+    : true
+  : false
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<IsTuple<[]>, true>>,
@@ -31,7 +37,7 @@ type cases = [
   Expect<Equal<IsTuple<readonly [1]>, true>>,
   Expect<Equal<IsTuple<{ length: 1 }>, false>>,
   Expect<Equal<IsTuple<number[]>, false>>,
-  Expect<Equal<IsTuple<never>, false>>,
+  Expect<Equal<IsTuple<never>, false>>
 ]
 
 /* _____________ Further Steps _____________ */

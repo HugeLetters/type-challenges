@@ -20,17 +20,43 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Unique<T> = any
+type isAny<T> = (T extends never ? true : false) extends false ? false : true
+type isEqual<T extends [any], U extends [any]> = (
+  U extends T
+    ? T extends U
+      ? isAny<U[0] | T[0]> extends true
+        ? [isAny<T[0]>, isAny<U[0]>] extends [true, true]
+          ? true
+          : false
+        : true
+      : false
+    : false
+) extends false
+  ? false
+  : true
+
+type TupleUnion<T extends any[]> = T extends [infer F, ...infer R] ? [F] | TupleUnion<R> : never
+
+type Unique<T extends any[]> = T extends [...infer R, infer F]
+  ? isEqual<[F], TupleUnion<R>> extends true
+    ? Unique<R>
+    : [...Unique<R>, F]
+  : []
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<Unique<[1, 1, 2, 2, 3, 3]>, [1, 2, 3]>>,
   Expect<Equal<Unique<[1, 2, 3, 4, 4, 5, 6, 7]>, [1, 2, 3, 4, 5, 6, 7]>>,
-  Expect<Equal<Unique<[1, 'a', 2, 'b', 2, 'a']>, [1, 'a', 2, 'b']>>,
-  Expect<Equal<Unique<[string, number, 1, 'a', 1, string, 2, 'b', 2, number]>, [string, number, 1, 'a', 2, 'b']>>,
-  Expect<Equal<Unique<[unknown, unknown, any, any, never, never]>, [unknown, any, never]>>,
+  Expect<Equal<Unique<[1, "a", 2, "b", 2, "a"]>, [1, "a", 2, "b"]>>,
+  Expect<
+    Equal<
+      Unique<[string, number, 1, "a", 1, string, 2, "b", 2, number]>,
+      [string, number, 1, "a", 2, "b"]
+    >
+  >,
+  Expect<Equal<Unique<[unknown, unknown, any, any, never, never]>, [unknown, any, never]>>
 ]
 
 /* _____________ Further Steps _____________ */

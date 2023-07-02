@@ -23,11 +23,17 @@ type Fill<
   T extends unknown[],
   N,
   Start extends number = 0,
-  End extends number = T['length'],
-> = any
+  End extends number = T["length"],
+  I extends any[] = [],
+  F extends boolean = I["length"] extends Start ? true : false
+> = [T, I["length"] & End] extends [[infer P, ...infer R], never]
+  ? F extends true
+    ? [N, ...Fill<R, N, Start, End, [...I, 1], F>]
+    : [P, ...Fill<R, N, Start, End, [...I, 1]>]
+  : T
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
   Expect<Equal<Fill<[], 0>, []>>,
@@ -40,7 +46,7 @@ type cases = [
   Expect<Equal<Fill<[1, 2, 3], true, 1, 3>, [1, true, true]>>,
   Expect<Equal<Fill<[1, 2, 3], true, 10, 0>, [1, 2, 3]>>,
   Expect<Equal<Fill<[1, 2, 3], true, 10, 20>, [1, 2, 3]>>,
-  Expect<Equal<Fill<[1, 2, 3], true, 0, 10>, [true, true, true]>>,
+  Expect<Equal<Fill<[1, 2, 3], true, 0, 10>, [true, true, true]>>
 ]
 
 /* _____________ Further Steps _____________ */
