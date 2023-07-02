@@ -17,26 +17,15 @@ const results = defineResults({
 })
 type Diffculty = keyof typeof results
 const selectedDifficulty = process.argv[2] as Diffculty | undefined
-const concurrentChecks = 6
+const concurrentChecks = 9 // change this depending on the height of your terminal window if you want it to look pretty
 
 async function main() {
-  const [files, filesCount] = await task(
-    `Getting challenge list${selectedDifficulty ? ` of difficulty ${selectedDifficulty}` : ""}`,
-    async () => glob(`./playground/${selectedDifficulty ?? "**"}/*.ts`)
-  ).then(
-    ({ result: files }) =>
-      [
-        chunk(
-          files.map(file => `./${file.replaceAll("\\", "/")}`),
-          concurrentChecks
-        ),
-        files.length,
-      ] as const
-  )
+  const { files, fileCount } = await getFiles()
+
   await task("Checking challenges", async ({ setStatus }) => {
     let progress = -1
     function incProgress() {
-      setStatus(`${((100 * ++progress) / filesCount).toFixed(2)}%`)
+      setStatus(`${((100 * ++progress) / fileCount).toFixed(2)}%`)
     }
     incProgress()
 
@@ -67,7 +56,24 @@ async function main() {
     }
   })
 
-  await task("Showing results", async () => {
+  outputResults()
+}
+
+function getFiles() {
+  return task(
+    `Getting challenge list${selectedDifficulty ? ` of difficulty ${selectedDifficulty}` : ""}`,
+    async () => glob(`./playground/${selectedDifficulty ?? "**"}/*.ts`)
+  ).then(({ result: files }) => ({
+    files: chunk(
+      files.map(file => `./${file.replaceAll("\\", "/")}`),
+      concurrentChecks
+    ),
+    fileCount: files.length,
+  }))
+}
+
+function outputResults() {
+  task("Showing results", async () => {
     Object.values(results).forEach(result => {
       result.sort((a, b) => b.index - a.index)
     })
@@ -75,12 +81,15 @@ async function main() {
       Object.entries(results)
         .filter(([diffculty]) => !selectedDifficulty || diffculty === selectedDifficulty)
         .map(([difficulty, results]) => {
-          return task(difficulty, async ({ setOutput }) => {
+          return task(difficulty, async ({ setOutput, setStatus }) => {
             setOutput(
               results.reduce((output, result) => {
                 return `${output}\n${result.challenge} - ${result.index}`
               }, "")
             )
+
+            const challengeCount = (await glob(`./playground/${difficulty}/*.ts`)).length
+            setStatus(`${(100 * (1 - results.length / challengeCount)).toFixed(2)}%`)
           })
         })
     )
