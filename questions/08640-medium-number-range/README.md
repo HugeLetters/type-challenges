@@ -1,4 +1,4 @@
-<!--info-header-start--><h1>Number Range <img src="https://img.shields.io/badge/-medium-d9901a" alt="medium"/> </h1><blockquote><p>by AaronGuo <a href="https://github.com/HongxuanG" target="_blank">@HongxuanG</a></p></blockquote><p><a href="https://tsch.js.org/8640/play" target="_blank"><img src="https://img.shields.io/badge/-Take%20the%20Challenge-3178c6?logo=typescript&logoColor=white" alt="Take the Challenge"/></a> </p><!--info-header-end-->
+<!--info-header-start--><h1> <img src="https://img.shields.io/badge/-medium-d9901a" alt="medium"/> </h1><blockquote><p>by undefined</p></blockquote><p><a href="https://tsch.js.org/8640/play" target="_blank"><img src="https://img.shields.io/badge/-Take%20the%20Challenge-3178c6?logo=typescript&logoColor=white" alt="Take the Challenge"/></a> </p><!--info-header-end-->
 
 Sometimes we want to limit the range of numbers...
 For examples.
