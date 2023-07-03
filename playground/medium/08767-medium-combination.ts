@@ -18,14 +18,36 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Combination<T extends string[]> = any
+type Combination<
+  T extends string[],
+  C extends string = T[number],
+  U extends string = C
+> = C extends C ? `${C}${"" | ` ${Combination<T, Exclude<U, C>>}`}` : never
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from "@type-challenges/utils"
 
 type cases = [
-  Expect<Equal<Combination<['foo', 'bar', 'baz']>,
-  'foo' | 'bar' | 'baz' | 'foo bar' | 'foo bar baz' | 'foo baz' | 'foo baz bar' | 'bar foo' | 'bar foo baz' | 'bar baz' | 'bar baz foo' | 'baz foo' | 'baz foo bar' | 'baz bar' | 'baz bar foo'>>,
+  Expect<
+    Equal<
+      Combination<["foo", "bar", "baz"]>,
+      | "foo"
+      | "bar"
+      | "baz"
+      | "foo bar"
+      | "foo bar baz"
+      | "foo baz"
+      | "foo baz bar"
+      | "bar foo"
+      | "bar foo baz"
+      | "bar baz"
+      | "bar baz foo"
+      | "baz foo"
+      | "baz foo bar"
+      | "baz bar"
+      | "baz bar foo"
+    >
+  >
 ]
 
 /* _____________ Further Steps _____________ */
