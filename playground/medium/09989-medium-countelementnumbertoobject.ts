@@ -19,18 +19,17 @@
     5: 1
   }
   */
-  type Simple3 = CountElementNumberToObject<[1,2,3,4,5,[1,2,3]]>
-  /*
-   return {
-    1: 2,
-    2: 2,
-    3: 2,
-    4: 1,
-    5: 1
-  }
-  */
+ type Simple3 = CountElementNumberToObject<[1,2,3,4,5,[1,2,3]]>
+ /*
+ return {
+   1: 2,
+   2: 2,
+   3: 2,
+   4: 1,
+   5: 1
+  } 
   ~~~
-
+  
   > View on GitHub: https://tsch.js.org/9989
 */
 
