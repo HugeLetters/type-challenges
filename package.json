@@ -57,7 +57,8 @@
       "antfu/if-newline": "off",
       "no-new": "off",
       "no-trailing-spaces": "off",
-      "@typescript-eslint/indent": "off"
+      "@typescript-eslint/indent": "off",
+      "@typescript-eslint/semi":"off"
     }
   }
 }
