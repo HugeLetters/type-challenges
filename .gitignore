@@ -6,3 +6,4 @@ dist
 *.local
 .playgroundcache
 .tsbuildcache
+tsconfig.stats.json

@@ -102,7 +102,7 @@ function checkChallenges() {
 }
 
 function parseTSCStdout(stdout: string) {
-  return [...new Set(stdout.match(/.+(?=\()/g))].map(getFileMeta);
+  return [...new Set(stdout.match(/.+\.ts/g))].map(getFileMeta);
 }
 
 main();
