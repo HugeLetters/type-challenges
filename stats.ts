@@ -38,10 +38,9 @@ async function main() {
   const { result: TSCStdout } = await task(
     `Checking challenges${selectedDifficulty ? ` of difficulty ${selectedDifficulty}` : ''}`,
     async ({ task }) => {
-      await task('Creating temporary tsconfig file', async ({ setTitle }) => {
-        await fs.writeFile(tempTSConfigPath, JSON.stringify(TSConfig));
-        setTitle(`Temporary config created at ${tempTSConfigPath}`);
-      });
+      await task(`Creating temporary tsconfig file at ${tempTSConfigPath}`, async () =>
+        fs.writeFile(tempTSConfigPath, JSON.stringify(TSConfig))
+      );
 
       return task('Checking challenges', async () => checkChallenges())
         .then(({ result }) => result)
@@ -58,31 +57,35 @@ async function main() {
     }
   });
 
-  outputResults();
+  const output = formatResults();
+  task.group(task =>
+    output.map(([difficulty, challenges, count]) =>
+      task(`${capitalize(difficulty)} challenges progress`, async ({ setOutput, setStatus }) => {
+        setOutput(challenges);
+        const challengeCount = (await glob(`./playground/${difficulty}/*.ts`)).length;
+        setStatus(`${(100 * (1 - count / challengeCount)).toFixed(2)}%`);
+      })
+    )
+  );
 }
 
-function outputResults() {
-  task('Showing results', async () => {
-    Object.values(results).forEach(result => {
-      result.sort((a, b) => b.index - a.index);
-    });
-    task.group(task =>
-      Object.entries(results)
-        .filter(([diffculty]) => !selectedDifficulty || diffculty === selectedDifficulty)
-        .map(([difficulty, results]) => {
-          return task(difficulty, async ({ setOutput, setStatus }) => {
-            setOutput(
-              results.reduce((output, result) => {
-                return `${output}\n${result.challenge} - ${result.index}`;
-              }, '')
-            );
-
-            const challengeCount = (await glob(`./playground/${difficulty}/*.ts`)).length;
-            setStatus(`${(100 * (1 - results.length / challengeCount)).toFixed(2)}%`);
-          });
-        })
+function formatResults() {
+  return Object.entries(results)
+    .filter(([diffculty]) => !selectedDifficulty || diffculty === selectedDifficulty)
+    .map(
+      ([diffculty, result]) =>
+        [
+          diffculty,
+          result
+            .sort((a, b) => b.index - a.index)
+            .reduce((output, result) => `${output}\n${result.challenge} - ${result.index}`, ''),
+          result.length,
+        ] as const
     );
-  });
+}
+
+function parseTSCStdout(stdout: string) {
+  return [...new Set(stdout.match(/.+\.ts/g))].map(getFileMeta);
 }
 
 function getFileMeta(file: string): [difficulty: Diffculty, challenge: string, no: number] {
@@ -101,8 +104,8 @@ function checkChallenges() {
   });
 }
 
-function parseTSCStdout(stdout: string) {
-  return [...new Set(stdout.match(/.+\.ts/g))].map(getFileMeta);
+function capitalize(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 main();
