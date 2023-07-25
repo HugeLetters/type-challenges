@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.25.1",
+    "@inquirer/checkbox": "^1.3.5",
     "@type-challenges/utils": "workspace:*",
     "@types/fs-extra": "^9.0.13",
     "@types/js-yaml": "^4.0.5",
@@ -37,6 +38,11 @@
     "prompts": "^2.4.2",
     "typescript": "^5.1.6",
     "utility-types": "^3.10.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@inquirer/checkbox>figures": "^5.0.0"
+    }
   },
   "eslintConfig": {
     "extends": "@antfu/eslint-config-ts",
@@ -59,7 +65,8 @@
       "no-trailing-spaces": "off",
       "@typescript-eslint/indent": "off",
       "@typescript-eslint/semi": "off",
-      "curly": "off"
+      "curly": "off",
+      "import/order": "off"
     }
   }
 }

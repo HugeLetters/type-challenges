@@ -1,24 +1,19 @@
+import checkbox from '@inquirer/checkbox';
+import { glob } from 'glob';
 import { exec } from 'node:child_process';
 import fs from 'node:fs/promises';
-import { glob } from 'glob';
 import task from 'tasuku';
+import { type Difficulty as NativeDifficulty } from './scripts/types';
 
+type Difficulty = Exclude<NativeDifficulty, 'pending'>;
 type Challenge = { challenge: string; index: number };
-function defineResults<T extends Record<string, Challenge[]>>(
-  results: T
-): { [K in keyof T]: Challenge[] } {
-  return results;
-}
-const results = defineResults({
+const results: Record<Difficulty, Challenge[]> = {
   warm: [],
   easy: [],
   medium: [],
   hard: [],
   extreme: [],
-});
-
-type Diffculty = keyof typeof results;
-const selectedDifficulty = process.argv[2] as Diffculty | undefined;
+};
 
 const tempTSConfigPath = 'tsconfig.stats.json';
 const TSConfig = {
@@ -31,24 +26,35 @@ const TSConfig = {
     tsBuildInfoFile: '.tsbuildcache',
     noUnusedParameters: false,
   },
-  include: [`./playground/${selectedDifficulty ?? '**'}/*.ts`],
 };
 
 async function main() {
-  const { result: TSCStdout } = await task(
-    `Checking challenges${selectedDifficulty ? ` of difficulty ${selectedDifficulty}` : ''}`,
-    async ({ task }) => {
-      await task(`Creating temporary tsconfig file at ${tempTSConfigPath}`, async () =>
-        fs.writeFile(tempTSConfigPath, JSON.stringify(TSConfig))
-      );
+  const selectedDifficulties = await checkbox({
+    choices: Object.keys(results).map(difficulty => ({
+      value: difficulty as Difficulty,
+      name: ` ${capitalize(difficulty)}`,
+    })),
+    message: 'Which difficulties would you like to check?',
+  }).then(selection => (selection.length ? selection : (Object.keys(results) as Difficulty[])));
 
-      return task('Checking challenges', async () => checkChallenges())
-        .then(({ result }) => result)
-        .finally(() =>
-          task('Deleting temporary tsconfig file', async () => fs.unlink(tempTSConfigPath))
-        );
-    }
-  );
+  const { result: TSCStdout } = await task('Checking challenges', async ({ task }) => {
+    await task(`Creating temporary tsconfig file at ${tempTSConfigPath}`, async () =>
+      fs.writeFile(
+        tempTSConfigPath,
+        JSON.stringify(
+          Object.assign(TSConfig, {
+            include: selectedDifficulties.map(difficulty => `./playground/${difficulty}/*.ts`),
+          })
+        )
+      )
+    );
+
+    return task('Type-checking the files', async () => checkChallenges())
+      .then(({ result }) => result)
+      .finally(() =>
+        task('Deleting temporary tsconfig file', async () => fs.unlink(tempTSConfigPath))
+      );
+  });
 
   await task('Parsing the results', async () => {
     const unsolvedChallenges = parseTSCStdout(TSCStdout);
@@ -57,7 +63,7 @@ async function main() {
     }
   });
 
-  const output = formatResults();
+  const output = formatResults(selectedDifficulties);
   task.group(task =>
     output.map(([difficulty, challenges, count]) =>
       task(`${capitalize(difficulty)} challenges progress`, async ({ setOutput, setStatus }) => {
@@ -69,9 +75,9 @@ async function main() {
   );
 }
 
-function formatResults() {
+function formatResults(selectetedDifficulties: Difficulty[]) {
   return Object.entries(results)
-    .filter(([diffculty]) => !selectedDifficulty || diffculty === selectedDifficulty)
+    .filter(([diffculty]) => selectetedDifficulties.includes(diffculty as Difficulty))
     .map(
       ([diffculty, result]) =>
         [
@@ -88,10 +94,10 @@ function parseTSCStdout(stdout: string) {
   return [...new Set(stdout.match(/.+\.ts/g))].map(getFileMeta);
 }
 
-function getFileMeta(file: string): [difficulty: Diffculty, challenge: string, no: number] {
+function getFileMeta(file: string): [difficulty: Difficulty, challenge: string, no: number] {
   const [, diffculty, name] = file.split('/');
   return [
-    diffculty as Diffculty,
+    diffculty as Difficulty,
     name.split('.')[0].match(/(?<=.+\-.+\-).+/)?.[0] ?? "Couldn't parse name",
     +(name.split('.')[0].match(/(.+?)\-/)?.[1] ?? Infinity) || Infinity,
   ];
