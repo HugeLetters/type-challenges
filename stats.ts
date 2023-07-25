@@ -105,8 +105,8 @@ function getFileMeta(file: string): [difficulty: Diffculty, challenge: string, n
   ]
 }
 
-async function checkChallenge(file: string) {
-  return await new Promise<boolean>(resolve => {
+function checkChallenge(file: string) {
+  return new Promise<boolean>(resolve => {
     exec(
       `tsc ${file} --noEmit --strict --skipLibCheck --incremental --tsBuildInfoFile "./.tsbuildcache"`,
       e => resolve(!e || !e.code)
