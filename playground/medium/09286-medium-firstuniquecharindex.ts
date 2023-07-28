@@ -12,18 +12,32 @@
 
 /* _____________ Your Code Here _____________ */
 
-type FirstUniqueCharIndex<T extends string> = any
+type StringtoTuple<S extends string> = S extends `${infer F}${infer R}`
+   ? [F, ...StringtoTuple<R>]
+   : [];
+
+type FirstUniqueCharIndex<
+   S extends string,
+   T extends unknown[] = StringtoTuple<S>,
+   P = never
+> = T extends [infer F, ...infer R]
+   ? F extends P | R[number]
+      ? FirstUniqueCharIndex<S, R, P | F>
+      : StringtoTuple<S> extends [...infer F, any, ...R]
+      ? F['length']
+      : -1
+   : -1;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<FirstUniqueCharIndex<'leetcode'>, 0>>,
-  Expect<Equal<FirstUniqueCharIndex<'loveleetcode'>, 2>>,
-  Expect<Equal<FirstUniqueCharIndex<'aabb'>, -1>>,
-  Expect<Equal<FirstUniqueCharIndex<''>, -1>>,
-  Expect<Equal<FirstUniqueCharIndex<'aaa'>, -1>>,
-]
+   Expect<Equal<FirstUniqueCharIndex<'leetcode'>, 0>>,
+   Expect<Equal<FirstUniqueCharIndex<'loveleetcode'>, 2>>,
+   Expect<Equal<FirstUniqueCharIndex<'aabb'>, -1>>,
+   Expect<Equal<FirstUniqueCharIndex<''>, -1>>,
+   Expect<Equal<FirstUniqueCharIndex<'aaa'>, -1>>
+];
 
 /* _____________ Further Steps _____________ */
 /*

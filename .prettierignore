@@ -1,4 +1,4 @@
-*
+*.*
 !playground/**/*.ts
 !stats.ts
 !*.json
