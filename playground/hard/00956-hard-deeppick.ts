@@ -8,7 +8,6 @@
   Implement a type DeepPick, that extends Utility types `Pick`.
   A type takes two arguments.
 
-
   For example:
 
   ```
@@ -37,39 +36,58 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DeepPick = any
+type UnionToIntersection<U> = (U extends U ? (arg: U) => void : never) extends (
+   arg: infer I
+) => void
+   ? I
+   : never;
+
+type DeepPick<O, S extends string> = UnionToIntersection<
+   S extends keyof O
+      ? { a: Pick<O, S> }
+      : S extends `${infer F extends keyof O & string}.${infer D}`
+      ? { a: { [K in F]: DeepPick<O[F], D> } }
+      : { a: unknown }
+> extends { a: infer A }
+   ? A
+   : never;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type Obj = {
-  a: number
-  b: string
-  c: boolean
-  obj: {
-    d: number
-    e: string
-    f: boolean
-    obj2: {
-      g: number
-      h: string
-      i: boolean
-    }
-  }
-  obj3: {
-    j: number
-    k: string
-    l: boolean
-  }
-}
+   a: number;
+   b: string;
+   c: boolean;
+   obj: {
+      d: number;
+      e: string;
+      f: boolean;
+      obj2: {
+         g: number;
+         h: string;
+         i: boolean;
+      };
+   };
+   obj3: {
+      j: number;
+      k: string;
+      l: boolean;
+   };
+};
 
 type cases = [
-  Expect<Equal<DeepPick<Obj, ''>, unknown>>,
-  Expect<Equal<DeepPick<Obj, 'a'>, { a: number }>>,
-  Expect<Equal<DeepPick<Obj, 'a' | ''>, { a: number } & unknown>>,
-  Expect<Equal<DeepPick<Obj, 'a' | 'obj.e'>, { a: number } & { obj: { e: string } }>>,
-  Expect<Equal<DeepPick<Obj, 'a' | 'obj.e' | 'obj.obj2.i'>, { a: number } & { obj: { e: string } } & { obj: { obj2: { i: boolean } } }>>,
-]
+   Expect<Equal<DeepPick<Obj, ''>, unknown>>,
+   Expect<Equal<DeepPick<Obj, 'a'>, { a: number }>>,
+   Expect<Equal<DeepPick<Obj, 'a' | ''>, { a: number } & unknown>>,
+   Expect<Equal<DeepPick<Obj, 'a' | 'obj.e'>, { a: number } & { obj: { e: string } }>>,
+   Expect<
+      Equal<
+         DeepPick<Obj, 'a' | 'obj.e' | 'obj.obj2.i'>,
+         { a: number } & { obj: { e: string } } & { obj: { obj2: { i: boolean } } }
+      >
+   >
+];
 
 /* _____________ Further Steps _____________ */
 /*
