@@ -19,21 +19,28 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsPalindrome<T> = any
+type isPalindrome<T> = T extends `${infer F}${infer R}`
+   ? R extends ''
+      ? true
+      : R extends `${infer M}${F}`
+      ? isPalindrome<M>
+      : false
+   : true;
+type IsPalindrome<T extends string | number> = isPalindrome<`${T}`>;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<IsPalindrome<'abc'>, false>>,
-  Expect<Equal<IsPalindrome<'b'>, true>>,
-  Expect<Equal<IsPalindrome<'abca'>, false>>,
-  Expect<Equal<IsPalindrome<'abba'>, true>>,
-  Expect<Equal<IsPalindrome<'abcba'>, true>>,
-  Expect<Equal<IsPalindrome<121>, true>>,
-  Expect<Equal<IsPalindrome<2332>, true>>,
-  Expect<Equal<IsPalindrome<19260817>, false>>,
-]
+   Expect<Equal<IsPalindrome<'abc'>, false>>,
+   Expect<Equal<IsPalindrome<'b'>, true>>,
+   Expect<Equal<IsPalindrome<'abca'>, false>>,
+   Expect<Equal<IsPalindrome<'abba'>, true>>,
+   Expect<Equal<IsPalindrome<'abcba'>, true>>,
+   Expect<Equal<IsPalindrome<121>, true>>,
+   Expect<Equal<IsPalindrome<2332>, true>>,
+   Expect<Equal<IsPalindrome<19260817>, false>>
+];
 
 /* _____________ Further Steps _____________ */
 /*

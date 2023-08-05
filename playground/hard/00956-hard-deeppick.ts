@@ -44,13 +44,11 @@ type UnionToIntersection<U> = (U extends U ? (arg: U) => void : never) extends (
 
 type DeepPick<O, S extends string> = UnionToIntersection<
    S extends keyof O
-      ? { a: Pick<O, S> }
-      : S extends `${infer F extends keyof O & string}.${infer D}`
-      ? { a: { [K in F]: DeepPick<O[F], D> } }
-      : { a: unknown }
-> extends { a: infer A }
-   ? A
-   : never;
+      ? Pick<O, S>
+      : S extends `${infer F}.${infer D}`
+      ? { [K in F & keyof O]: DeepPick<O[K], D> }
+      : never
+>;
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils';

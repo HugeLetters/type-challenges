@@ -26,34 +26,45 @@
 */
 
 /* _____________ Your Code Here _____________ */
+type _CamelCase<S extends string> = S extends `${infer F}${infer S}${infer R}`
+   ? [Uppercase<S> & Lowercase<S>, F] extends [never, '_']
+      ? `${Uppercase<S>}${CamelCase<R>}`
+      : `${F}${CamelCase<`${S}${R}`>}`
+   : S;
 
-type Camelize<T> = any
+type CamelCase<S extends string> = _CamelCase<Lowercase<S>>;
+
+type Camelize<T> = T extends any[]
+   ? { [K in keyof T]: Camelize<T[K]> }
+   : { [K in keyof T as CamelCase<Extract<K, string>>]: Camelize<T[K]> };
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<
-    Camelize<{
-      some_prop: string
-      prop: { another_prop: string }
-      array: [
-        { snake_case: string },
-        { another_element: { yet_another_prop: string } },
-        { yet_another_element: string },
-      ]
-    }>,
-    {
-      someProp: string
-      prop: { anotherProp: string }
-      array: [
-        { snakeCase: string },
-        { anotherElement: { yetAnotherProp: string } },
-        { yetAnotherElement: string },
-      ]
-    }
-  >>,
-]
+   Expect<
+      Equal<
+         Camelize<{
+            some_prop: string;
+            prop: { another_prop: string };
+            array: [
+               { snake_case: string },
+               { another_element: { yet_another_prop: string } },
+               { yet_another_element: string }
+            ];
+         }>,
+         {
+            someProp: string;
+            prop: { anotherProp: string };
+            array: [
+               { snakeCase: string },
+               { anotherElement: { yetAnotherProp: string } },
+               { yetAnotherElement: string }
+            ];
+         }
+      >
+   >
+];
 
 /* _____________ Further Steps _____________ */
 /*

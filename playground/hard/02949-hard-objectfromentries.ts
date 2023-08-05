@@ -26,22 +26,22 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ObjectFromEntries<T> = any
+type ObjectFromEntries<T extends [string, any]> = {
+   [K in T as K[0]]: K[1];
+};
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 interface Model {
-  name: string
-  age: number
-  locations: string[] | null
+   name: string;
+   age: number;
+   locations: string[] | null;
 }
 
-type ModelEntries = ['name', string] | ['age', number] | ['locations', string[] | null]
+type ModelEntries = ['name', string] | ['age', number] | ['locations', string[] | null];
 
-type cases = [
-  Expect<Equal<ObjectFromEntries<ModelEntries>, Model>>,
-]
+type cases = [Expect<Equal<ObjectFromEntries<ModelEntries>, Model>>];
 
 /* _____________ Further Steps _____________ */
 /*

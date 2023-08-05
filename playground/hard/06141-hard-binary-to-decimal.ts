@@ -18,18 +18,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type BinaryToDecimal<S extends string> = any
+type BinaryToDecimal<S extends string, A extends any[] = []> = S extends `${infer F}${infer R}`
+   ? BinaryToDecimal<R, F extends '1' ? [...A, ...A, 1] : [...A, ...A]>
+   : A['length'];
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<BinaryToDecimal<'10'>, 2>>,
-  Expect<Equal<BinaryToDecimal<'0011'>, 3>>,
-  Expect<Equal<BinaryToDecimal<'00000000'>, 0>>,
-  Expect<Equal<BinaryToDecimal<'11111111'>, 255>>,
-  Expect<Equal<BinaryToDecimal<'10101010'>, 170>>,
-]
+   Expect<Equal<BinaryToDecimal<'10'>, 2>>,
+   Expect<Equal<BinaryToDecimal<'0011'>, 3>>,
+   Expect<Equal<BinaryToDecimal<'00000000'>, 0>>,
+   Expect<Equal<BinaryToDecimal<'11111111'>, 255>>,
+   Expect<Equal<BinaryToDecimal<'10101010'>, 170>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
