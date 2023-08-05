@@ -12,27 +12,29 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CapitalizeNestObjectKeys<T> = any
+type CapitalizeNestObjectKeys<T> = T extends any[]
+   ? { [K in keyof T]: CapitalizeNestObjectKeys<T[K]> }
+   : { [K in keyof T as Capitalize<K & string>]: CapitalizeNestObjectKeys<T[K]> };
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
-import { ExpectFalse, NotEqual } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
+import { ExpectFalse, NotEqual } from '@type-challenges/utils';
 
 type foo = {
-  foo: string
-  bars: [{ foo: string }]
-}
+   foo: string;
+   bars: [{ foo: string }];
+};
 
 type Foo = {
-  Foo: string
-  Bars: [{
-    Foo: string
-  }]
-}
+   Foo: string;
+   Bars: [
+      {
+         Foo: string;
+      }
+   ];
+};
 
-type cases = [
-  Expect<Equal<Foo, CapitalizeNestObjectKeys<foo>>>,
-]
+type cases = [Expect<Equal<Foo, CapitalizeNestObjectKeys<foo>>>];
 
 /* _____________ Further Steps _____________ */
 /*

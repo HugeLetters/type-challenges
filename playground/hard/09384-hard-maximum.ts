@@ -28,16 +28,22 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Maximum<T extends any[]> = any
+type Tuple<N extends number, T extends any[] = []> = T['length'] extends N
+   ? T
+   : Tuple<N, [...T, 1]>;
+type Max<T extends any[], TM extends any[] = []> = T extends [infer F extends number, ...infer R]
+   ? Max<R, Tuple<F> extends [...TM, ...any[]] ? Tuple<F> : TM>
+   : TM['length'];
+type Maximum<T extends any[]> = T extends [] ? never : Max<T>;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<Maximum<[]>, never>>,
-  Expect<Equal<Maximum<[0, 2, 1]>, 2>>,
-  Expect<Equal<Maximum<[1, 20, 200, 150]>, 200>>,
-]
+   Expect<Equal<Maximum<[]>, never>>,
+   Expect<Equal<Maximum<[0, 2, 1]>, 2>>,
+   Expect<Equal<Maximum<[1, 20, 200, 150]>, 200>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
