@@ -12,17 +12,19 @@
 
 /* _____________ Your Code Here _____________ */
 
-type OptionalKeys<T> = any
+type OptionalKeys<T> = keyof { [K in keyof T as T[K] extends Required<T>[K] ? never : K]: 1 };
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<OptionalKeys<{ a: number; b?: string }>, 'b'>>,
-  Expect<Equal<OptionalKeys<{ a: undefined; b?: undefined }>, 'b'>>,
-  Expect<Equal<OptionalKeys<{ a: undefined; b?: undefined; c?: string; d?: null }>, 'b' | 'c' | 'd'>>,
-  Expect<Equal<OptionalKeys<{}>, never>>,
-]
+   Expect<Equal<OptionalKeys<{ a: number; b?: string }>, 'b'>>,
+   Expect<Equal<OptionalKeys<{ a: undefined; b?: undefined }>, 'b'>>,
+   Expect<
+      Equal<OptionalKeys<{ a: undefined; b?: undefined; c?: string; d?: null }>, 'b' | 'c' | 'd'>
+   >,
+   Expect<Equal<OptionalKeys<{}>, never>>
+];
 
 /* _____________ Further Steps _____________ */
 /*

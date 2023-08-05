@@ -47,9 +47,6 @@ type ToPrimitive<O> = O extends object
    ? V
    : never;
 
-type b = ToPrimitive<PersonInfo>;
-
-//   ^?
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils';
 

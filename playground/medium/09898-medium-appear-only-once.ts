@@ -18,10 +18,6 @@ type FindEles<T extends any[], C = never> = T extends [infer F, ...infer R]
       : [F, ...FindEles<R, C | F>]
    : [];
 
-type b = FindEles<[2, 3, 4, 5, 6, 7, 6, 3]>;
-
-//   ^?
-
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils';
 import { ExpectFalse, NotEqual } from '@type-challenges/utils';

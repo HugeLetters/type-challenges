@@ -17,21 +17,32 @@
 */
 
 /* _____________ Your Code Here _____________ */
+type isFirstLetter<S extends string> = Capitalize<S> extends Uncapitalize<S> ? false : true;
 
-type CapitalizeWords<S extends string> = any
+type CapitalizeWords<S extends string, L extends string = ''> = S extends `${infer F}${infer R}`
+   ? CapitalizeWords<
+        Capitalize<F> extends Uncapitalize<F> ? Capitalize<R> : R,
+        `${L}${L extends '' ? Capitalize<F> : F}`
+     >
+   : L;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<CapitalizeWords<'foobar'>, 'Foobar'>>,
-  Expect<Equal<CapitalizeWords<'FOOBAR'>, 'FOOBAR'>>,
-  Expect<Equal<CapitalizeWords<'foo bar'>, 'Foo Bar'>>,
-  Expect<Equal<CapitalizeWords<'foo bar hello world'>, 'Foo Bar Hello World'>>,
-  Expect<Equal<CapitalizeWords<'foo bar.hello,world'>, 'Foo Bar.Hello,World'>>,
-  Expect<Equal<CapitalizeWords<'aa!bb@cc#dd$ee%ff^gg&hh*ii(jj)kk_ll+mm{nn}oo|pp🤣qq'>, 'Aa!Bb@Cc#Dd$Ee%Ff^Gg&Hh*Ii(Jj)Kk_Ll+Mm{Nn}Oo|Pp🤣Qq'>>,
-  Expect<Equal<CapitalizeWords<''>, ''>>,
-]
+   Expect<Equal<CapitalizeWords<'foobar'>, 'Foobar'>>,
+   Expect<Equal<CapitalizeWords<'FOOBAR'>, 'FOOBAR'>>,
+   Expect<Equal<CapitalizeWords<'foo bar'>, 'Foo Bar'>>,
+   Expect<Equal<CapitalizeWords<'foo bar hello world'>, 'Foo Bar Hello World'>>,
+   Expect<Equal<CapitalizeWords<'foo bar.hello,world'>, 'Foo Bar.Hello,World'>>,
+   Expect<
+      Equal<
+         CapitalizeWords<'aa!bb@cc#dd$ee%ff^gg&hh*ii(jj)kk_ll+mm{nn}oo|pp🤣qq'>,
+         'Aa!Bb@Cc#Dd$Ee%Ff^Gg&Hh*Ii(Jj)Kk_Ll+Mm{Nn}Oo|Pp🤣Qq'
+      >
+   >,
+   Expect<Equal<CapitalizeWords<''>, ''>>
+];
 
 /* _____________ Further Steps _____________ */
 /*

@@ -21,19 +21,25 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Format<T extends string> = any
+type Format<S extends string> = S extends `${string}%${infer K}${infer R}`
+   ? K extends 'd'
+      ? (a: number) => Format<R>
+      : K extends 's'
+      ? (a: string) => Format<R>
+      : Format<R>
+   : string;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<Format<'abc'>, string>>,
-  Expect<Equal<Format<'a%sbc'>, (s1: string) => string>>,
-  Expect<Equal<Format<'a%dbc'>, (d1: number) => string>>,
-  Expect<Equal<Format<'a%%dbc'>, string>>,
-  Expect<Equal<Format<'a%%%dbc'>, (d1: number) => string>>,
-  Expect<Equal<Format<'a%dbc%s'>, (d1: number) => (s1: string) => string>>,
-]
+   Expect<Equal<Format<'abc'>, string>>,
+   Expect<Equal<Format<'a%sbc'>, (s1: string) => string>>,
+   Expect<Equal<Format<'a%dbc'>, (d1: number) => string>>,
+   Expect<Equal<Format<'a%%dbc'>, string>>,
+   Expect<Equal<Format<'a%%%dbc'>, (d1: number) => string>>,
+   Expect<Equal<Format<'a%dbc%s'>, (d1: number) => (s1: string) => string>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
