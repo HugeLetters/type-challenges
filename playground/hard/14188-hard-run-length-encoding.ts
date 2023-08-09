@@ -14,20 +14,42 @@
 /* _____________ Your Code Here _____________ */
 
 namespace RLE {
-  export type Encode<S extends string> = any
-  export type Decode<S extends string> = any
+   type innerEncode<
+      S extends string,
+      N extends string,
+      C extends any[] = [1]
+   > = S extends `${infer F}${infer R}`
+      ? F extends N
+         ? innerEncode<R, F, [1, ...C]>
+         : `${C extends [1] ? '' : C['length']}${N}${Encode<S>}`
+      : N;
+
+   export type Encode<S extends string> = S extends `${infer F}${infer R}` ? innerEncode<R, F> : S;
+
+   type RepeatChar<
+      C extends string,
+      N extends string,
+      A extends any[] = [],
+      R extends string = ''
+   > = `${A['length']}` extends N ? R : RepeatChar<C, N, [1, ...A], `${C}${R}`>;
+
+   export type Decode<S extends string, N extends string = ''> = S extends `${infer F}${infer R}`
+      ? F extends `${number}`
+         ? Decode<R, `${N}${F}`>
+         : `${N extends '' ? F : RepeatChar<F, N>}${Decode<R>}`
+      : S;
 }
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  // Raw string -> encoded string
-  Expect<Equal<RLE.Encode<'AAABCCXXXXXXY'>, '3AB2C6XY'>>,
+   // Raw string -> encoded string
+   Expect<Equal<RLE.Encode<'AAABCCXXXXXXY'>, '3AB2C6XY'>>,
 
-  // Encoded string -> decoded string
-  Expect<Equal<RLE.Decode<'3AB2C6XY'>, 'AAABCCXXXXXXY'>>,
-]
+   // Encoded string -> decoded string
+   Expect<Equal<RLE.Decode<'3AB2C6XY'>, 'AAABCCXXXXXXY'>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
