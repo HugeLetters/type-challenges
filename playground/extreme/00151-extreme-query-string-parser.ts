@@ -19,28 +19,44 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ParseQueryString = any
+type MergeValues<V, T> = T extends any[]
+   ? V extends T[number]
+      ? T
+      : [...T, V]
+   : V extends T
+   ? T
+   : [T, V];
+
+type ParseParam<P extends string, O> = P extends `${infer K}=${infer V}`
+   ? { [k in K]: k extends keyof O ? MergeValues<V, O[k]> : V } & Omit<O, K>
+   : P extends ''
+   ? O
+   : { [k in P]: k extends keyof O ? MergeValues<true, O[k]> : true } & Omit<O, P>;
+
+type ParseQueryString<Q extends string, O = {}> = Q extends `${infer F}&${infer R}`
+   ? ParseQueryString<R, ParseParam<F, O>>
+   : Omit<ParseParam<Q, O>, never>;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<ParseQueryString<''>, {}>>,
-  Expect<Equal<ParseQueryString<'k1'>, { k1: true }>>,
-  Expect<Equal<ParseQueryString<'k1&k1'>, { k1: true }>>,
-  Expect<Equal<ParseQueryString<'k1&k2'>, { k1: true; k2: true }>>,
-  Expect<Equal<ParseQueryString<'k1=v1'>, { k1: 'v1' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k1=v2'>, { k1: ['v1', 'v2'] }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k2=v2'>, { k1: 'v1'; k2: 'v2' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k2=v2&k1=v2'>, { k1: ['v1', 'v2']; k2: 'v2' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k2'>, { k1: 'v1'; k2: true }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k1=v1'>, { k1: 'v1' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k1=v2&k1=v1'>, { k1: ['v1', 'v2'] }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k2=v1&k1=v2&k1=v1'>, { k1: ['v1', 'v2']; k2: 'v1' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k2=v2&k1=v2&k1=v3'>, { k1: ['v1', 'v2', 'v3']; k2: 'v2' }>>,
-  Expect<Equal<ParseQueryString<'k1=v1&k1'>, { k1: ['v1', true] }>>,
-  Expect<Equal<ParseQueryString<'k1&k1=v1'>, { k1: [true, 'v1'] }>>,
-]
+   Expect<Equal<ParseQueryString<''>, {}>>,
+   Expect<Equal<ParseQueryString<'k1'>, { k1: true }>>,
+   Expect<Equal<ParseQueryString<'k1&k1'>, { k1: true }>>,
+   Expect<Equal<ParseQueryString<'k1&k2'>, { k1: true; k2: true }>>,
+   Expect<Equal<ParseQueryString<'k1=v1'>, { k1: 'v1' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k1=v2'>, { k1: ['v1', 'v2'] }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k2=v2'>, { k1: 'v1'; k2: 'v2' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k2=v2&k1=v2'>, { k1: ['v1', 'v2']; k2: 'v2' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k2'>, { k1: 'v1'; k2: true }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k1=v1'>, { k1: 'v1' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k1=v2&k1=v1'>, { k1: ['v1', 'v2'] }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k2=v1&k1=v2&k1=v1'>, { k1: ['v1', 'v2']; k2: 'v1' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k2=v2&k1=v2&k1=v3'>, { k1: ['v1', 'v2', 'v3']; k2: 'v2' }>>,
+   Expect<Equal<ParseQueryString<'k1=v1&k1'>, { k1: ['v1', true] }>>,
+   Expect<Equal<ParseQueryString<'k1&k1=v1'>, { k1: [true, 'v1'] }>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
