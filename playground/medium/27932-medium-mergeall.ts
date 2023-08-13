@@ -23,27 +23,27 @@
 /* _____________ Your Code Here _____________ */
 
 type MergeTwo<Initial, Override> = {
-  [K in keyof Initial | keyof Override]:
-    | (K extends keyof Override ? Override[K] : never)
-    | (K extends keyof Initial ? Initial[K] : never)
-}
+   [K in keyof Initial | keyof Override]:
+      | (K extends keyof Override ? Override[K] : never)
+      | (K extends keyof Initial ? Initial[K] : never);
+};
 type MergeAll<XS extends any[], T = {}> = XS extends [infer First, ...infer Rest]
-  ? MergeAll<Rest, MergeTwo<T, First>>
-  : T
+   ? MergeAll<Rest, MergeTwo<T, First>>
+   : T;
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from "@type-challenges/utils"
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<MergeAll<[]>, {}>>,
-  Expect<Equal<MergeAll<[{ a: 1 }]>, { a: 1 }>>,
-  Expect<Equal<MergeAll<[{ a: string }, { a: string }]>, { a: string }>>,
-  Expect<Equal<MergeAll<[{}, { a: string }]>, { a: string }>>,
-  Expect<Equal<MergeAll<[{ a: 1 }, { c: 2 }]>, { a: 1; c: 2 }>>,
-  Expect<Equal<MergeAll<[{ a: 1; b: 2 }, { a: 2 }, { c: 3 }]>, { a: 1 | 2; b: 2; c: 3 }>>,
-  Expect<Equal<MergeAll<[{ a: 1 }, { a: number }]>, { a: number }>>,
-  Expect<Equal<MergeAll<[{ a: number }, { a: 1 }]>, { a: number }>>,
-  Expect<Equal<MergeAll<[{ a: 1 | 2 }, { a: 1 | 3 }]>, { a: 1 | 2 | 3 }>>
-]
+   Expect<Equal<MergeAll<[]>, {}>>,
+   Expect<Equal<MergeAll<[{ a: 1 }]>, { a: 1 }>>,
+   Expect<Equal<MergeAll<[{ a: string }, { a: string }]>, { a: string }>>,
+   Expect<Equal<MergeAll<[{}, { a: string }]>, { a: string }>>,
+   Expect<Equal<MergeAll<[{ a: 1 }, { c: 2 }]>, { a: 1; c: 2 }>>,
+   Expect<Equal<MergeAll<[{ a: 1; b: 2 }, { a: 2 }, { c: 3 }]>, { a: 1 | 2; b: 2; c: 3 }>>,
+   Expect<Equal<MergeAll<[{ a: 1 }, { a: number }]>, { a: number }>>,
+   Expect<Equal<MergeAll<[{ a: number }, { a: 1 }]>, { a: number }>>,
+   Expect<Equal<MergeAll<[{ a: 1 | 2 }, { a: 1 | 3 }]>, { a: 1 | 2 | 3 }>>
+];
 
 /* _____________ Further Steps _____________ */
 /*

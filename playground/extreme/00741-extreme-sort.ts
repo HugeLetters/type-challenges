@@ -29,33 +29,43 @@
 */
 
 /* _____________ Your Code Here _____________ */
+type NumToTuple<N, A extends any[] = []> = A['length'] extends N ? A : NumToTuple<N, [...A, 1]>;
+type Greater<A, B> = NumToTuple<A> extends [...NumToTuple<B>, ...any[]] ? true : false;
 
-type Sort = any
+type Bubble<A, Desc> = A extends [infer F, infer S, ...infer R]
+   ? Greater<F, S> extends Desc
+      ? [F, ...Bubble<[S, ...R], Desc>]
+      : [S, ...Bubble<[F, ...R], Desc>]
+   : A;
+
+type Sort<A, Desc = false> = Bubble<A, Desc> extends [...infer F, infer L]
+   ? [...Sort<F, Desc>, L]
+   : A;
 
 /* _____________ Test Cases _____________ */
-import type { Equal, Expect } from '@type-challenges/utils'
+import type { Equal, Expect } from '@type-challenges/utils';
 
 type cases = [
-  Expect<Equal<Sort<[]>, []>>,
-  Expect<Equal<Sort<[1]>, [1]>>,
-  Expect<Equal<Sort<[2, 1]>, [1, 2]>>,
-  Expect<Equal<Sort<[0, 0, 0]>, [0, 0, 0]>>,
-  Expect<Equal<Sort<[1, 2, 3]>, [1, 2, 3]>>,
-  Expect<Equal<Sort<[3, 2, 1]>, [1, 2, 3]>>,
-  Expect<Equal<Sort<[3, 2, 1, 2]>, [1, 2, 2, 3]>>,
-  Expect<Equal<Sort<[3, 2, 0, 1, 0, 0, 0]>, [0, 0, 0, 0, 1, 2, 3]>>,
-  Expect<Equal<Sort<[2, 4, 7, 6, 6, 6, 5, 8, 9]>, [2, 4, 5, 6, 6, 6, 7, 8, 9]>>,
-  Expect<Equal<Sort<[1, 1, 2, 1, 1, 1, 1, 1, 1]>, [1, 1, 1, 1, 1, 1, 1, 1, 2]>>,
-  Expect<Equal<Sort<[], true>, []>>,
-  Expect<Equal<Sort<[1], true>, [1]>>,
-  Expect<Equal<Sort<[2, 1], true>, [2, 1]>>,
-  Expect<Equal<Sort<[0, 0, 0], true>, [0, 0, 0]>>,
-  Expect<Equal<Sort<[1, 2, 3], true>, [3, 2, 1]>>,
-  Expect<Equal<Sort<[3, 2, 1], true>, [3, 2, 1]>>,
-  Expect<Equal<Sort<[3, 2, 1, 2], true>, [3, 2, 2, 1]>>,
-  Expect<Equal<Sort<[3, 2, 0, 1, 0, 0, 0], true>, [3, 2, 1, 0, 0, 0, 0]>>,
-  Expect<Equal<Sort<[2, 4, 7, 6, 6, 6, 5, 8, 9], true>, [9, 8, 7, 6, 6, 6, 5, 4, 2]>>,
-]
+   Expect<Equal<Sort<[]>, []>>,
+   Expect<Equal<Sort<[1]>, [1]>>,
+   Expect<Equal<Sort<[2, 1]>, [1, 2]>>,
+   Expect<Equal<Sort<[0, 0, 0]>, [0, 0, 0]>>,
+   Expect<Equal<Sort<[1, 2, 3]>, [1, 2, 3]>>,
+   Expect<Equal<Sort<[3, 2, 1]>, [1, 2, 3]>>,
+   Expect<Equal<Sort<[3, 2, 1, 2]>, [1, 2, 2, 3]>>,
+   Expect<Equal<Sort<[3, 2, 0, 1, 0, 0, 0]>, [0, 0, 0, 0, 1, 2, 3]>>,
+   Expect<Equal<Sort<[2, 4, 7, 6, 6, 6, 5, 8, 9]>, [2, 4, 5, 6, 6, 6, 7, 8, 9]>>,
+   Expect<Equal<Sort<[1, 1, 2, 1, 1, 1, 1, 1, 1]>, [1, 1, 1, 1, 1, 1, 1, 1, 2]>>,
+   Expect<Equal<Sort<[], true>, []>>,
+   Expect<Equal<Sort<[1], true>, [1]>>,
+   Expect<Equal<Sort<[2, 1], true>, [2, 1]>>,
+   Expect<Equal<Sort<[0, 0, 0], true>, [0, 0, 0]>>,
+   Expect<Equal<Sort<[1, 2, 3], true>, [3, 2, 1]>>,
+   Expect<Equal<Sort<[3, 2, 1], true>, [3, 2, 1]>>,
+   Expect<Equal<Sort<[3, 2, 1, 2], true>, [3, 2, 2, 1]>>,
+   Expect<Equal<Sort<[3, 2, 0, 1, 0, 0, 0], true>, [3, 2, 1, 0, 0, 0, 0]>>,
+   Expect<Equal<Sort<[2, 4, 7, 6, 6, 6, 5, 8, 9], true>, [9, 8, 7, 6, 6, 6, 5, 4, 2]>>
+];
 
 /* _____________ Further Steps _____________ */
 /*
