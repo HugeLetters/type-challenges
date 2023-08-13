@@ -72,9 +72,6 @@ type Comparator<A extends number, B extends number> = A extends B
    ? Comparison.Equal
    : ParsedComparator<ExtractSign<A>, ExtractSign<B>>;
 
-type c = Comparator<673, 656>;
-//   ^?
-
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils';
 
